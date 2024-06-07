@@ -1,0 +1,57 @@
+def xo_oyunu():
+  tahta = [[" " for _ in range(3)] for _ in range(3)]  # 3x3 oyun tahtasını oluştur
+  oyuncu = "X"  # İlk oyuncu X olsun
+
+  def tahtayı_yazdır():  # Tahtayı ekrana yazdırma fonksiyonu
+    for satır in tahta:
+      print("|", *satır, "|")  # Satırı yazdır
+
+  def hamle_yap(satır, sütun):  # Oyuncunun hamlesini işleme fonksiyonu
+    nonlocal oyuncu
+    if tahta[satır][sütun] == " ":  # Hücre boşsa
+      tahta[satır][sütun] = oyuncu  # Hücreye oyuncunun sembolünü yerleştir
+      oyuncu = "O" if oyuncu == "X" else "X"  # Sırayı değiştir
+    else:
+      print("Geçersiz hamle. Tekrar deneyin.")
+
+  def kazanma_kontrolü():  # Kazanma koşullarını kontrol etme fonksiyonu
+    # Satırları kontrol et
+    for i in range(3):
+      if tahta[i][0] == tahta[i][1] == tahta[i][2] != " ":
+        return tahta[i][0]  # Kazanana ait sembolü döndür
+
+    # Sütunları kontrol et
+    for i in range(3):
+      if tahta[0][i] == tahta[1][i] == tahta[2][i] != " ":
+        return tahta[0][i]  # Kazanana ait sembolü döndür
+
+    # Köşegenleri kontrol et
+    if tahta[0][0] == tahta[1][1] == tahta[2][2] != " ":
+      return tahta[0][0]  # Kazanana ait sembolü döndür
+    if tahta[0][2] == tahta[1][1] == tahta[2][0] != " ":
+      return tahta[0][2]  # Kazanana ait sembolü döndür
+
+    return None  # Kazanma yoksa None döndür
+
+  def oyun_bitti_mi():  # Oyunun bitmiş olup olmadığını kontrol etme fonksiyonu
+    return kazanma_kontrolü() is not None or all(
+        hücre != " " for satır in tahta for hücre in satır
+    )  # Kazanma varsa veya tahta doluysa True döndür
+
+  while not oyun_bitti_mi():  # Oyun bitene kadar döngü
+    tahtayı_yazdır()  # Tahtayı yazdır
+    satır = int(input(f"{oyuncu}'nin Sırası. Satır Girin (0-2): "))
+    sütun = int(input(f"{oyuncu}'nin Sırası. Sütun Girin (0-2): "))
+    hamle_yap(satır, sütun)  # Oyuncunun hamlesini yap
+
+    kazanan = kazanma_kontrolü()  # Kazanma kontrolü
+    if kazanan:
+      tahtayı_yazdır()  # Tahtayı son kez yazdır
+      print(f"{kazanan} kazandı!")  # Kazanana ait mesajı yazdır
+      break
+
+  else:  # Oyun berabere biterse
+    tahtayı_yazdır()  # Tahtayı son kez yazdır
+    print("Berabere!")
+
+xo_oyunu()  # Oyunu başlat
